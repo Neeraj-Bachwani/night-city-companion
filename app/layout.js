@@ -19,11 +19,13 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <title>Night City Companion</title>
+      <head>
+      <title>Night City Companion</title>
         <meta name="description" content="A cyberpunk dashboard interface for events, terminals, and more." /> 
         <meta property="og:title" content="Night City Companion" />  
         <meta property="og:description" content="A cyberpunk dashboard interface for events, terminals, and more." />
+      </head>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {children}
       </body>
     </html>
