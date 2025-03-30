@@ -20,6 +20,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <title>Night City Companion</title>
+        <meta name="description" content="A cyberpunk dashboard interface for events, terminals, and more." /> 
+        <meta property="og:title" content="Night City Companion" />  
         {children}
       </body>
     </html>
