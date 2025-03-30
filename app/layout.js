@@ -23,6 +23,7 @@ export default function RootLayout({ children }) {
         <title>Night City Companion</title>
         <meta name="description" content="A cyberpunk dashboard interface for events, terminals, and more." /> 
         <meta property="og:title" content="Night City Companion" />  
+        <meta property="og:description" content="A cyberpunk dashboard interface for events, terminals, and more." />
         {children}
       </body>
     </html>
