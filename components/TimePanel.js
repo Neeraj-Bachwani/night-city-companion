@@ -15,6 +15,7 @@ export default function TimePanel() {
   const formattedTime = time.toLocaleTimeString([], { 
     hour: '2-digit', 
     minute: '2-digit',
+    hour12: false,
   }).replace(/ AM | PM/, '').replace(/ a.m. | p.m./, '');
 
   const formattedDate = time.toLocaleDateString(undefined, {

@@ -1,14 +1,29 @@
 import WeatherPanel from "@/components/WeatherPanel";
 import TimePanel from "@/components/TimePanel";
+import EventPanel from "@/components/EventPanel";
 
 export default function Home() {
-  const current_time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit'}).replace(/ a.m. | p.m./, '');
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <h1 className="text-4xl font-bold">Hello World</h1>
-      <p className="mt-4 text-lg">Welcome to my Next.js app!</p>
-      <WeatherPanel/>
-      <TimePanel/>
+    <main className="min-h-screen bg-gray-900 p-8 text-cyan-100 font-mono">
+      
+      <header className="mb-8">
+        <h1 className="text-3xl font-bold text-cyan-400 mb-1">NIGHTCITY COMPANION</h1>
+        <p className="text-green-400 text-sm">// SYSTEM STATUS: ONLINE</p>
+      </header>
+
+     
+      <div className="grid gap-6">
+        <div className="grid md:grid-cols-2 gap-6">
+          <WeatherPanel />
+          <TimePanel />
+        </div>
+
+        
+        <section>
+          <EventPanel />
+        </section>
+
+      </div>
     </main>
   );
 }
