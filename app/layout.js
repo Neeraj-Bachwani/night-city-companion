@@ -1,5 +1,6 @@
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
+import Head from 'next/head';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -19,12 +20,12 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <head>
-      <title>Night City Companion</title>
+      <Head>
+        <title>Night City Companion</title>
         <meta name="description" content="A cyberpunk dashboard interface for events, terminals, and more." /> 
         <meta property="og:title" content="Night City Companion" />  
         <meta property="og:description" content="A cyberpunk dashboard interface for events, terminals, and more." />
-      </head>
+      </Head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {children}
       </body>
