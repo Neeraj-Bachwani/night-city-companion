@@ -114,7 +114,7 @@ export default function EventPanel() {
             <div className="flex flex-wrap gap-3">
               {selectedEvent.id === 1 && ( 
                 <button 
-                  onClick={handleInitiateTask('typing')}
+                  onClick={() =>handleInitiateTask('typing')}
                   className="flex-1 flex items-center justify-center gap-2 py-3 bg-cyan-900 hover:bg-cyan-800 rounded-lg transition-colors"
                 >
                   <Terminal className="w-5 h-5" />
@@ -127,7 +127,7 @@ export default function EventPanel() {
             <div className="flex flex-wrap gap-3">
               {selectedEvent.id === 2 && ( 
                 <button 
-                  onClick={handleInitiateTask('scramble')}
+                  onClick={() =>handleInitiateTask('scramble')}
                   className="flex-1 flex items-center justify-center gap-2 py-3 bg-cyan-900 hover:bg-cyan-800 rounded-lg transition-colors"
                 >
                   <Terminal className="w-5 h-5" />
@@ -148,7 +148,7 @@ export default function EventPanel() {
         />
       )}
 
-      {activeGame === 'typing' &&  selectedEvent?.id === 2 && (
+      {activeGame === 'scramble' &&  selectedEvent?.id === 2 && (
       <DataScrambleGame 
         difficulty={selectedEvent.priority} 
         onComplete={handleGameComplete}
