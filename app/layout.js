@@ -25,7 +25,7 @@ export default function RootLayout({ children }) {
         <meta name="description" content="A cyberpunk dashboard interface for events, terminals, and more." /> 
         <meta property="og:title" content="Night City Companion" />  
         <meta property="og:description" content="A cyberpunk dashboard interface for events, terminals, and more." />
-        <meta property="og:image" content="/images/logo/Logo.png" />
+        <meta property="og:image" content="https://night-city-companion.vercel.app/images/logo/Logo.png" />
       </Head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {children}
