@@ -4,7 +4,6 @@ import { MapPin, Clock, Users, X, Terminal } from 'lucide-react';
 import TypingTerminal from '@/games/TimeBased/TypingTerminal'; 
 import DataScrambleGame from '@/games/TimeBased/FindWord'; 
 
-// Sample event data
 const events = [
   {
     id: 1,
@@ -56,13 +55,12 @@ export default function EventPanel() {
   };
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-bold text-cyan-400 border-b border-cyan-400 pb-2 mb-4">
-        // UPCOMING EVENTS
-      </h2>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div style={styles.container}>
+      <h2 style={styles.header}>// MISSION QUEUE</h2>
+      
+      <div style={styles.eventList}>
         {events.map((event) => (
-          <CompactEventCard 
+          <VerticalEventCard 
             key={event.id} 
             event={event}
             onClick={() => setSelectedEvent(event)}
@@ -70,77 +68,72 @@ export default function EventPanel() {
         ))}
       </div>
 
-      {/* Event Details Modal */}
+      {/* Redesigned Modal */}
       {selectedEvent && !activeGame && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50">
-          <div className="bg-gray-900 border-2 border-cyan-500 rounded-lg max-w-2xl w-full p-6 relative">
+        <div style={styles.modalOverlay}>
+          <div style={styles.modalContent}>
             <button 
               onClick={() => setSelectedEvent(null)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white"
+              style={styles.closeButton}
             >
-              <X className="w-6 h-6" />
+              <X size={20} />
             </button>
 
-            <h3 className="text-2xl font-bold text-cyan-400 mb-2">
-              {selectedEvent.title}
-            </h3>
+            <div style={styles.modalHeader}>
+              <h3 style={styles.modalTitle}>{selectedEvent.title}</h3>
+            </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <div className="flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-purple-400" />
+            <div style={styles.metaContainer}>
+              <div style={styles.metaItem}>
+                <MapPin size={16} style={styles.icon} />
                 <span>{selectedEvent.location}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Clock className="w-5 h-5 text-yellow-400" />
+              <div style={styles.metaItem}>
+                <Clock size={16} style={styles.icon} />
                 <span>{selectedEvent.time}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Users className="w-5 h-5 text-green-400" />
-                <span>{selectedEvent.participants} participant{selectedEvent.participants !== 1 ? 's' : ''}</span>
+              <div style={styles.metaItem}>
+                <Users size={16} style={styles.icon} />
+                <span>
+                  {selectedEvent.participants} {selectedEvent.participants === 1 ? 'OPERATIVE' : 'OPERATIVES'}
+                </span>
               </div>
             </div>
 
-            <div className="bg-gray-800 p-4 rounded mb-6">
-              <h4 className="text-sm font-mono text-cyan-300 mb-2">// BACKSTORY</h4>
-              <p className="text-gray-300">{selectedEvent.backstory}</p>
+            <div style={styles.section}>
+              <h4 style={styles.sectionHeader}>// BACKSTORY</h4>
+              <p style={styles.sectionText}>{selectedEvent.backstory}</p>
             </div>
 
-            <div className="bg-gray-800 p-4 rounded mb-6">
-              <h4 className="text-sm font-mono text-cyan-300 mb-2">// BRIEFING</h4>
-              <p className="text-gray-300">{selectedEvent.description}</p>
+            <div style={styles.section}>
+              <h4 style={styles.sectionHeader}>// BRIEFING</h4>
+              <p style={styles.sectionText}>{selectedEvent.description}</p>
             </div>
 
-            {/*Test for event 1 */}
-            <div className="flex flex-wrap gap-3">
-              {selectedEvent.id === 1 && ( 
+            <div style={styles.buttonContainer}>
+              {selectedEvent.id === 1 && (
                 <button 
-                  onClick={() =>handleInitiateTask('typing')}
-                  className="flex-1 flex items-center justify-center gap-2 py-3 bg-cyan-900 hover:bg-cyan-800 rounded-lg transition-colors"
+                  style={styles.actionButton}
+                  onClick={() => handleInitiateTask('typing')}
                 >
-                  <Terminal className="w-5 h-5" />
-                  Initiate Hack Sequence
+                  <Terminal size={16} />
+                  INITIATE HACK SEQUENCE
+                </button>
+              )}
+              {selectedEvent.id === 2 && (
+                <button 
+                  style={styles.actionButton}
+                  onClick={() => handleInitiateTask('scramble')}
+                >
+                  <Terminal size={16} />
+                  DECRYPT DATASTREAM
                 </button>
               )}
             </div>
-
-              {/*Test for event 2 */}
-            <div className="flex flex-wrap gap-3">
-              {selectedEvent.id === 2 && ( 
-                <button 
-                  onClick={() =>handleInitiateTask('scramble')}
-                  className="flex-1 flex items-center justify-center gap-2 py-3 bg-cyan-900 hover:bg-cyan-800 rounded-lg transition-colors"
-                >
-                  <Terminal className="w-5 h-5" />
-                  Initiate Hack Sequence
-                </button>
-              )}
-            </div>
-
           </div>
         </div>
       )}
 
-      {/* Terminal Game - Only for Arasaka event */}
       {activeGame === 'typing' && selectedEvent?.id === 1 && (
         <TypingTerminal 
           onComplete={handleGameComplete}
@@ -148,38 +141,244 @@ export default function EventPanel() {
         />
       )}
 
-      {activeGame === 'scramble' &&  selectedEvent?.id === 2 && (
-      <DataScrambleGame 
-        difficulty={selectedEvent.priority} 
-        onComplete={handleGameComplete}
-      /> 
-     )
-    }
-
+      {activeGame === 'scramble' && selectedEvent?.id === 2 && (
+        <DataScrambleGame 
+          difficulty={selectedEvent.priority} 
+          onComplete={handleGameComplete}
+        /> 
+      )}
     </div>
   );
 }
 
-function CompactEventCard({ event, onClick }) {
+function VerticalEventCard({ event, onClick }) {
   const priorityColors = {
-    high: "border-red-500",
-    medium: "border-yellow-500",
-    low: "border-green-500"
+    high: { border: 'var(--accent-red)', bg: 'rgba(234, 85, 71, 0.1)' },
+    medium: { border: 'var(--neon-green)', bg: 'rgba(177, 255, 0, 0.1)' },
+    low: { border: 'var(--neon-blue)', bg: 'rgba(0, 240, 255, 0.1)' }
   };
 
   return (
     <div 
       onClick={onClick}
-      className={`cursor-pointer border-l-4 ${priorityColors[event.priority]} bg-gray-800 p-4 rounded-r-lg hover:bg-gray-700 transition-colors`}
+      style={{
+        ...styles.eventCard,
+        borderLeft: `3px solid ${priorityColors[event.priority].border}`,
+        backgroundColor: priorityColors[event.priority].bg
+      }}
     >
-      <div className="flex justify-between items-start">
-        <h3 className="text-lg font-semibold text-white truncate">
-          {event.title}
-        </h3>
-        <span className="text-xs px-2 py-1 rounded-full bg-gray-700 text-gray-300">
+      <div style={styles.eventCardHeader}>
+        <h3 style={styles.eventTitle}>{event.title}</h3>
+        <span style={{
+          ...styles.eventType,
+          color: priorityColors[event.priority].border
+        }}>
           {event.type.toUpperCase()}
+        </span>
+      </div>
+      <div style={styles.eventMeta}>
+        <span style={styles.eventTime}>
+          <Clock size={14} style={{ marginRight: '0.25rem' }} />
+          {event.time}
+        </span>
+        <span style={styles.eventLocation}>
+          <MapPin size={14} style={{ marginRight: '0.25rem' }} />
+          {event.location}
         </span>
       </div>
     </div>
   );
 }
+
+const styles = {
+  container: {
+    backgroundColor: 'rgba(27, 19, 72, 0.3)',
+    border: '1px solid var(--neon-green)',
+    borderRadius: '4px',
+    padding: '1rem',
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  header: {
+    color: 'var(--accent-red)',
+    fontFamily: 'var(--font-mono)',
+    fontSize: '0.75rem',
+    letterSpacing: '0.05em',
+    marginBottom: '1rem',
+    borderBottom: '1px solid var(--accent-red)',
+    paddingBottom: '0.5rem',
+  },
+  eventList: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.5rem',
+  },
+  eventCard: {
+    padding: '0.75rem',
+    borderRadius: '0 4px 4px 0',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+    ':hover': {
+      backgroundColor: 'rgba(177, 255, 0, 0.15)',
+    },
+  },
+  eventCardHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '0.25rem',
+  },
+  eventTitle: {
+    color: 'var(--neon-green)',
+    fontFamily: 'var(--font-mono)',
+    fontSize: '0.9rem',
+    fontWeight: '600',
+    margin: 0,
+    letterSpacing: '0.05em',
+  },
+  eventType: {
+    fontFamily: 'var(--font-mono)',
+    fontSize: '0.65rem',
+    fontWeight: '600',
+    letterSpacing: '0.05em',
+    padding: '0.15rem 0.5rem',
+    borderRadius: '4px',
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+  },
+  eventMeta: {
+    display: 'flex',
+    gap: '1rem',
+    fontSize: '0.75rem',
+    color: 'var(--neon-blue)',
+    fontFamily: 'var(--font-mono)',
+  },
+  eventTime: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  eventLocation: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  modalOverlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.9)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1000,
+    padding: '1rem',
+  },
+  modalContent: {
+    backgroundColor: 'var(--dark-primary)',
+    border: '1px solid var(--neon-green)',
+    borderRadius: '4px',
+    padding: '1.5rem',
+    maxWidth: '600px',
+    width: '100%',
+    position: 'relative',
+    boxShadow: '0 0 15px var(--neon-green)',
+  },
+  closeButton: {
+    position: 'absolute',
+    top: '1rem',
+    right: '1rem',
+    color: 'var(--neon-green)',
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+    ':hover': {
+      color: 'var(--accent-red)',
+    }
+  },
+  modalHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '1.5rem',
+    gap: '1rem',
+  },
+  modalTitle: {
+    color: 'var(--neon-green)',
+    fontFamily: 'var(--font-mono)',
+    fontSize: '1.25rem',
+    margin: 0,
+    flex: 1,
+  },
+  priorityBadge: {
+    fontFamily: 'var(--font-mono)',
+    fontSize: '0.65rem',
+    fontWeight: 'bold',
+    padding: '0.25rem 0.5rem',
+    borderRadius: '4px',
+    textTransform: 'uppercase',
+  },
+  metaContainer: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+    gap: '1rem',
+    marginBottom: '1.5rem',
+    fontFamily: 'var(--font-sans)',
+  },
+  metaItem: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.5rem',
+    color: 'var(--neon-blue)',
+    fontSize: '0.9rem',
+  },
+  icon: {
+    color: 'var(--neon-green)',
+  },
+  
+  section: {
+    backgroundColor: 'rgba(27, 19, 72, 0.5)',
+    padding: '1rem',
+    borderRadius: '4px',
+    marginBottom: '1rem',
+    borderLeft: '2px solid var(--neon-green)',
+  },
+  sectionHeader: {
+    color: 'var(--neon-green)',
+    fontFamily: 'var(--font-mono)',
+    fontSize: '0.75rem',
+    marginBottom: '0.5rem',
+    letterSpacing: '0.05em',
+  },
+  sectionText: {
+    color: 'var(--neon-blue)',
+    fontFamily: 'var(--font-sans)',
+    fontSize: '0.9rem',
+    lineHeight: '1.5',
+    margin: 0,
+  },
+  buttonContainer: {
+    display: 'flex',
+    gap: '1rem',
+    marginTop: '1.5rem',
+  },
+  actionButton: {
+    flex: 1,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '0.5rem',
+    padding: '0.75rem',
+    backgroundColor: 'rgba(0, 240, 255, 0.1)',
+    border: '1px solid var(--neon-blue)',
+    color: 'var(--neon-green)',
+    fontFamily: 'var(--font-mono)',
+    fontSize: '0.8rem',
+    fontWeight: '600',
+    letterSpacing: '0.05em',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+    ':hover': {
+      backgroundColor: 'rgba(0, 240, 255, 0.2)',
+    },
+  },
+};

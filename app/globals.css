@@ -1,26 +1,110 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+ 
+  --dark-primary: #0D0A1A;
+  --dark-secondary: #1B1348;
+  --accent-red: #EA5547;
+  --neon-green: #B1FF00;
+  --neon-blue: #00F0FF;
+  --hot-pink: #FF2AEF;
+  
+  --background: var(--dark-primary);
+  --foreground: var(--neon-blue);
+
+  --font-sans: 'Rajdhani', sans-serif;
+  --font-mono: 'Monobloco', monospace;
+  --font-heading: 'Clathax', sans-serif;
+  --font-display: 'Kleemax', sans-serif;
+  --font-code: 'Starmap', monospace;
 }
 
-:root {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Font faces */
+@font-face {
+  font-family: 'Clathax';
+  src: url('/fonts/Clathax-Demo.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@font-face {
+  font-family: 'Kleemax';
+  src: url('/fonts/KleemaxDemo.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Starmap';
+  src: url('/fonts/starmap.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Rajdhani';
+  src: url('/fonts/Rajdhani-Medium.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Monobloco';
+  src: url('/fonts/Monobloco.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--dark-primary) !important;
+  color: var(--neon-blue) !important;
+  font-family: var(--font-sans);
+}
+
+.neon-text {
+  text-shadow: 0 0 5px var(--neon-blue), 0 0 10px var(--neon-blue);
+}
+
+.glow-box {
+  box-shadow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue);
+}
+
+@keyframes flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+    opacity: 1;
+    text-shadow: 0 0 5px var(--neon-green);
+  }
+
+  20%, 24%, 55% {
+    opacity: 0.5;
+    text-shadow: none;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.signal-bar {
+  animation: pulse 1.5s infinite;
+}
+.signal-bar:nth-child(1) { animation-delay: 0.2s; }
+.signal-bar:nth-child(2) { animation-delay: 0.4s; }
+.signal-bar:nth-child(3) { animation-delay: 0.6s; }
+
+@keyframes pulse {
+  0%, 100% { 
+    opacity: 0.5;
+    transform: scaleY(0.8);
+  }
+  50% { 
+    opacity: 1;
+    transform: scaleY(1.1);
+  }
 }
