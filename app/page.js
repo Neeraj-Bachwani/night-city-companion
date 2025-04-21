@@ -2,6 +2,7 @@
 import WeatherPanel from "@/components/WeatherPanel";
 import TimePanel from "@/components/TimePanel";
 import EventPanel from "@/components/EventPanel";
+import MusicPanel from "@/components/MusicPanel";
 
 export default function Home() {
   return (
@@ -29,8 +30,15 @@ export default function Home() {
           </div>
 
           <div style={styles.mainContent}>
+            
             <EventPanel />
+            <div style={styles.panelSpacing}>
+
+            <MusicPanel />
+            </div>
+            
           </div>
+          
         </div>
       </div>
     </div>
@@ -119,4 +127,8 @@ const styles = {
   mainContent: {
     flex: 1,
   },
+  panelSpacing: {
+    marginTop: "2rem",
+  },
+  
 };

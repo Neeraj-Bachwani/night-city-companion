@@ -63,8 +63,7 @@ export default function TerminalGame({ mode = "time" }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (input === currentWord) {
-      // Add command line immediately after correct input
+    if (input.toUpperCase() === currentWord.toUpperCase()) {
       const randomTemplate = COMMAND_TEMPLATES[Math.floor(Math.random() * COMMAND_TEMPLATES.length)];
       const newCommand = randomTemplate.replace('{word}', currentWord.toLowerCase());
       setCommandLines(prev => [...prev, newCommand]);
@@ -84,7 +83,7 @@ export default function TerminalGame({ mode = "time" }) {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 font-mono">
       <div className="bg-gray-900 border-2 border-cyan-500 rounded-md w-full max-w-2xl relative">
-        {/* Terminal Header */}
+        
         <div className="flex justify-between items-center bg-gray-800 p-2 border-b border-cyan-400">
           <span className="text-cyan-400">root@nightcity:~</span>
           <button 
@@ -95,7 +94,7 @@ export default function TerminalGame({ mode = "time" }) {
           </button>
         </div>
 
-        {/* Message Display */}
+      
         {message && (
           <div className={`absolute top-20 left-0 right-0 mx-auto w-max px-4 py-2 rounded-md z-10 
             ${message.type === "error" ? "bg-red-900 text-red-100" : 
@@ -105,7 +104,7 @@ export default function TerminalGame({ mode = "time" }) {
           </div>
         )}
 
-        {/* Terminal Body */}
+        
         <div className="p-4 text-green-400 h-96 overflow-y-auto">
           {commandLines.map((line, i) => (
             <div key={i} className="mb-1">
@@ -130,7 +129,7 @@ export default function TerminalGame({ mode = "time" }) {
           </div>
         </div>
 
-        {/* Status Bar */}
+       
         <div className="bg-gray-800 p-2 border-t border-cyan-400">
           <div className="flex justify-between items-center text-xs">
             {mode === "health" ? (

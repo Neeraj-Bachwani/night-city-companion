@@ -40,6 +40,30 @@ const events = [
   }
 ];
 
+const priorityStyles = {
+  high: {
+    color: 'var(--accent-red)',
+    border: '1px solid var(--accent-red)',
+    bg: 'rgba(234, 85, 71, 0.1)',
+    shadow: '0 0 15px var(--accent-red)',
+    headerBorder: '2px solid var(--accent-red)'
+  },
+  medium: {
+    color: 'var(--neon-green)',
+    border: '1px solid var(--neon-green)',
+    bg: 'rgba(177, 255, 0, 0.1)',
+    shadow: '0 0 15px var(--neon-green)',
+    headerBorder: '2px solid var(--neon-green)'
+  },
+  low: {
+    color: 'var(--neon-blue)',
+    border: '1px solid var(--neon-blue)',
+    bg: 'rgba(0, 240, 255, 0.1)',
+    shadow: '0 0 15px var(--neon-blue)',
+    headerBorder: '2px solid var(--neon-blue)'
+  }
+};
+
 export default function EventPanel() {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [activeGame, setActiveGame] = useState(null);
@@ -54,6 +78,11 @@ export default function EventPanel() {
     alert(success ? "ACCESS GRANTED: Firewall breached" : "MISSION FAILED: Arasaka countermeasures activated");
   };
 
+  const handleCloseModal = () => {
+    setSelectedEvent(null);
+    setActiveGame(null);
+  };
+
   return (
     <div style={styles.container}>
       <h2 style={styles.header}>// MISSION QUEUE</h2>
@@ -63,7 +92,10 @@ export default function EventPanel() {
           <VerticalEventCard 
             key={event.id} 
             event={event}
-            onClick={() => setSelectedEvent(event)}
+            onClick={() => {
+              setSelectedEvent(event);
+              setActiveGame(null); 
+            }}
           />
         ))}
       </div>
@@ -71,49 +103,91 @@ export default function EventPanel() {
       {/* Redesigned Modal */}
       {selectedEvent && !activeGame && (
         <div style={styles.modalOverlay}>
-          <div style={styles.modalContent}>
+          <div style={{
+            ...styles.modalContent,
+            border: priorityStyles[selectedEvent.priority].border,
+            boxShadow: priorityStyles[selectedEvent.priority].shadow,
+            backgroundColor: priorityStyles[selectedEvent.priority].bg
+          }}>
             <button 
-              onClick={() => setSelectedEvent(null)}
-              style={styles.closeButton}
+              onClick={handleCloseModal}
+              style={{
+                ...styles.closeButton,
+                color: priorityStyles[selectedEvent.priority].color
+              }}
             >
               <X size={20} />
             </button>
 
             <div style={styles.modalHeader}>
-              <h3 style={styles.modalTitle}>{selectedEvent.title}</h3>
+              <h3 style={{
+                ...styles.modalTitle,
+                color: priorityStyles[selectedEvent.priority].color
+              }}>
+                {selectedEvent.title}
+              </h3>
             </div>
             
             <div style={styles.metaContainer}>
               <div style={styles.metaItem}>
-                <MapPin size={16} style={styles.icon} />
+                <MapPin size={16} style={{
+                  color: priorityStyles[selectedEvent.priority].color
+                }} />
                 <span>{selectedEvent.location}</span>
               </div>
               <div style={styles.metaItem}>
-                <Clock size={16} style={styles.icon} />
+                <Clock size={16} style={{
+                  color: priorityStyles[selectedEvent.priority].color
+                }} />
                 <span>{selectedEvent.time}</span>
               </div>
               <div style={styles.metaItem}>
-                <Users size={16} style={styles.icon} />
+                <Users size={16} style={{
+                  color: priorityStyles[selectedEvent.priority].color
+                }} />
                 <span>
                   {selectedEvent.participants} {selectedEvent.participants === 1 ? 'OPERATIVE' : 'OPERATIVES'}
                 </span>
               </div>
             </div>
 
-            <div style={styles.section}>
-              <h4 style={styles.sectionHeader}>// BACKSTORY</h4>
+            <div style={{
+              ...styles.section,
+              borderLeft: priorityStyles[selectedEvent.priority].headerBorder
+            }}>
+              <h4 style={{
+                ...styles.sectionHeader,
+                color: priorityStyles[selectedEvent.priority].color
+              }}>
+                // BACKSTORY
+              </h4>
               <p style={styles.sectionText}>{selectedEvent.backstory}</p>
             </div>
 
-            <div style={styles.section}>
-              <h4 style={styles.sectionHeader}>// BRIEFING</h4>
+            <div style={{
+              ...styles.section,
+              borderLeft: priorityStyles[selectedEvent.priority].headerBorder
+            }}>
+              <h4 style={{
+                ...styles.sectionHeader,
+                color: priorityStyles[selectedEvent.priority].color
+              }}>
+                // BRIEFING
+              </h4>
               <p style={styles.sectionText}>{selectedEvent.description}</p>
             </div>
 
             <div style={styles.buttonContainer}>
               {selectedEvent.id === 1 && (
                 <button 
-                  style={styles.actionButton}
+                  style={{
+                    ...styles.actionButton,
+                    border: `1px solid ${priorityStyles[selectedEvent.priority].color}`,
+                    color: priorityStyles[selectedEvent.priority].color,
+                    ':hover': {
+                      backgroundColor: 'rgba(0, 240, 255, 0.2)',
+                    }
+                  }}
                   onClick={() => handleInitiateTask('typing')}
                 >
                   <Terminal size={16} />
@@ -122,7 +196,14 @@ export default function EventPanel() {
               )}
               {selectedEvent.id === 2 && (
                 <button 
-                  style={styles.actionButton}
+                  style={{
+                    ...styles.actionButton,
+                    border: `1px solid ${priorityStyles[selectedEvent.priority].color}`,
+                    color: priorityStyles[selectedEvent.priority].color,
+                    ':hover': {
+                      backgroundColor: 'rgba(0, 240, 255, 0.2)',
+                    }
+                  }}
                   onClick={() => handleInitiateTask('scramble')}
                 >
                   <Terminal size={16} />
@@ -152,37 +233,31 @@ export default function EventPanel() {
 }
 
 function VerticalEventCard({ event, onClick }) {
-  const priorityColors = {
-    high: { border: 'var(--accent-red)', bg: 'rgba(234, 85, 71, 0.1)' },
-    medium: { border: 'var(--neon-green)', bg: 'rgba(177, 255, 0, 0.1)' },
-    low: { border: 'var(--neon-blue)', bg: 'rgba(0, 240, 255, 0.1)' }
-  };
-
   return (
     <div 
       onClick={onClick}
       style={{
         ...styles.eventCard,
-        borderLeft: `3px solid ${priorityColors[event.priority].border}`,
-        backgroundColor: priorityColors[event.priority].bg
+        borderLeft: `3px solid ${priorityStyles[event.priority].color}`,
+        backgroundColor: priorityStyles[event.priority].bg
       }}
     >
       <div style={styles.eventCardHeader}>
         <h3 style={styles.eventTitle}>{event.title}</h3>
         <span style={{
           ...styles.eventType,
-          color: priorityColors[event.priority].border
+          color: priorityStyles[event.priority].color
         }}>
           {event.type.toUpperCase()}
         </span>
       </div>
       <div style={styles.eventMeta}>
         <span style={styles.eventTime}>
-          <Clock size={14} style={{ marginRight: '0.25rem' }} />
+          <Clock size={14} style={{ marginRight: '0.25rem', color: priorityStyles[event.priority].color }} />
           {event.time}
         </span>
         <span style={styles.eventLocation}>
-          <MapPin size={14} style={{ marginRight: '0.25rem' }} />
+          <MapPin size={14} style={{ marginRight: '0.25rem', color: priorityStyles[event.priority].color }} />
           {event.location}
         </span>
       </div>
@@ -274,25 +349,21 @@ const styles = {
     padding: '1rem',
   },
   modalContent: {
-    backgroundColor: 'var(--dark-primary)',
-    border: '1px solid var(--neon-green)',
     borderRadius: '4px',
     padding: '1.5rem',
     maxWidth: '600px',
     width: '100%',
     position: 'relative',
-    boxShadow: '0 0 15px var(--neon-green)',
   },
   closeButton: {
     position: 'absolute',
     top: '1rem',
     right: '1rem',
-    color: 'var(--neon-green)',
     background: 'none',
     border: 'none',
     cursor: 'pointer',
     ':hover': {
-      color: 'var(--accent-red)',
+      opacity: 0.8,
     }
   },
   modalHeader: {
@@ -303,7 +374,6 @@ const styles = {
     gap: '1rem',
   },
   modalTitle: {
-    color: 'var(--neon-green)',
     fontFamily: 'var(--font-mono)',
     fontSize: '1.25rem',
     margin: 0,
@@ -331,19 +401,14 @@ const styles = {
     color: 'var(--neon-blue)',
     fontSize: '0.9rem',
   },
-  icon: {
-    color: 'var(--neon-green)',
-  },
   
   section: {
     backgroundColor: 'rgba(27, 19, 72, 0.5)',
     padding: '1rem',
     borderRadius: '4px',
     marginBottom: '1rem',
-    borderLeft: '2px solid var(--neon-green)',
   },
   sectionHeader: {
-    color: 'var(--neon-green)',
     fontFamily: 'var(--font-mono)',
     fontSize: '0.75rem',
     marginBottom: '0.5rem',
@@ -369,16 +434,11 @@ const styles = {
     gap: '0.5rem',
     padding: '0.75rem',
     backgroundColor: 'rgba(0, 240, 255, 0.1)',
-    border: '1px solid var(--neon-blue)',
-    color: 'var(--neon-green)',
     fontFamily: 'var(--font-mono)',
     fontSize: '0.8rem',
     fontWeight: '600',
     letterSpacing: '0.05em',
     cursor: 'pointer',
     transition: 'all 0.2s ease',
-    ':hover': {
-      backgroundColor: 'rgba(0, 240, 255, 0.2)',
-    },
   },
 };

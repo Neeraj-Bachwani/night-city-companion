@@ -2,17 +2,12 @@
 import { useState, useEffect, useCallback } from 'react';
 
 const DATA_PATTERNS = [
-  // Easy - obvious patterns
-  { pattern: "34-23", difficulty: "easy", code: "> decrypt --sequence=34-23" },
-  { pattern: "MAX", difficulty: "easy", code: "> override --user=MAX" },
-  
-  // Medium - slightly hidden
-  { pattern: "0x4A3F", difficulty: "medium", code: "> memory --address=0x4A3F" },
-  { pattern: "ICE-9", difficulty: "medium", code: "> firewall --protocol=ICE-9" },
-  
-  // Hard - well hidden
-  { pattern: "SILVERHAND", difficulty: "hard", code: "> access --id=SILVERHAND" },
-  { pattern: "42.191", difficulty: "hard", code: "> coordinates --location=42.191" }
+  { pattern: "34-23", difficulty: "easy" },
+  { pattern: "MAX", difficulty: "easy" },
+  { pattern: "0x4A3F", difficulty: "medium"  },
+  { pattern: "ICE-9", difficulty: "medium" },
+  { pattern: "SILVERHAND", difficulty: "hard" },
+  { pattern: "42.191", difficulty: "hard" }
 ];
 
 const GIBBERISH_CHARS = "!@#$%^&*()_+-=[]{};':\",./<>?~\\|";
@@ -28,14 +23,12 @@ export default function DataScrambleGame({ difficulty = "medium", onComplete }) 
   const [selectedText, setSelectedText] = useState("");
   const [timerActive, setTimerActive] = useState(true);
 
-  // Generate scrambled data with hidden pattern
   const generateData = useCallback(() => {
     const patterns = DATA_PATTERNS.filter(p => p.difficulty === difficulty);
     const { pattern, code } = patterns[Math.floor(Math.random() * patterns.length)];
     setTarget(pattern);
     
     const data = [];
-    // Insert target in random position
     const targetLine = Math.floor(Math.random() * LINES_COUNT);
     const targetPos = Math.floor(Math.random() * (LINE_LENGTH - pattern.length));
     
@@ -56,7 +49,6 @@ export default function DataScrambleGame({ difficulty = "medium", onComplete }) 
     return code;
   }, [difficulty]);
 
-  // Handle text selection
   const handleTextSelect = () => {
     const selection = window.getSelection().toString().trim();
     if (selection && !found) {
@@ -64,13 +56,12 @@ export default function DataScrambleGame({ difficulty = "medium", onComplete }) 
       if (selection === target) {
         setFound(true);
         setTimerActive(false);
-        setMessage("SEQUENCE VERIFIED!");
+        setMessage("ACCESS GRANTED: Firewall breached");
         setTimeout(() => onComplete(true), 1500);
       }
     }
   };
 
-  // Initialize game
   useEffect(() => {
     generateData();
     const timer = timerActive && setInterval(() => {
@@ -85,45 +76,47 @@ export default function DataScrambleGame({ difficulty = "medium", onComplete }) 
     return () => clearInterval(timer);
   }, [generateData, timerActive]);
 
-  // Check time
   useEffect(() => {
     if (timeLeft <= 0 && !found) {
       setTimerActive(false);
-      setMessage("SYSTEM LOCKOUT: Too slow!");
+      setMessage("MISSION FAILED: Arasaka countermeasures activated");
       setTimeout(() => onComplete(false), 1500);
     }
   }, [timeLeft, found, onComplete]);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 font-mono">
-      <div className="bg-gray-900 border-2 border-cyan-500 rounded-md w-full max-w-2xl relative">
+    <div style={styles.overlay}>
+      <div style={styles.container}>
         {/* Header */}
-        <div className="flex justify-between items-center bg-gray-800 p-2 border-b border-cyan-400">
-          <span className="text-cyan-400">data_scanner.exe</span>
-          <div className="text-yellow-400">TIME: {Math.max(0, timeLeft)}s</div>
+        <div style={styles.header}>
+          <span>// DATASTREAM DECRYPTION</span>
+          <div style={styles.timer}>
+            TIME REMAINING: <span style={styles.timerValue}>{Math.max(0, timeLeft)}s</span>
+          </div>
         </div>
 
-        {/* Message */}
+        {/* Instructions */}
+        <div style={styles.instructions}>
+          // SELECT THE HIDDEN SEQUENCE WITH YOUR CURSOR
+        </div>
+
+        {/* Message overlay */}
         {message && (
-          <div className={`absolute top-20 left-0 right-0 mx-auto w-max px-4 py-2 rounded-md z-10 
-            ${message.includes("VERIFIED") ? "bg-green-900 text-green-100" : 
-              "bg-red-900 text-red-100"}`}>
+          <div style={{
+            ...styles.message,
+            ...(message.includes("GRANTED") ? styles.messageSuccess : styles.messageError)
+          }}>
             {message}
           </div>
         )}
 
-        {/* Instructions */}
-        <div className="p-2 text-xs text-cyan-300 border-b border-gray-700">
-          // SELECT THE HIDDEN SEQUENCE WITH YOUR CURSOR
-        </div>
-
-        {/* Scrambled Data */}
+        {/* Data display */}
         <div 
-          className="p-4 text-green-400 h-96 overflow-y-auto select-text cursor-text"
+          style={styles.display}
           onMouseUp={handleTextSelect}
         >
           {scrambledData.map((line, i) => (
-            <div key={i} className="mb-1 font-mono tracking-tighter select-text">
+            <div key={i} style={styles.line}>
               {line.split("").map((char, j) => {
                 const isTarget = line.includes(target) && 
                   j >= line.indexOf(target) && 
@@ -135,10 +128,10 @@ export default function DataScrambleGame({ difficulty = "medium", onComplete }) 
                 return (
                   <span 
                     key={j} 
-                    className={`
-                      ${isTarget && found ? "text-yellow-300 bg-gray-700" : ""}
-                      ${isSelected ? "bg-cyan-900 text-white" : ""}
-                    `}
+                    style={{
+                      ...(isTarget && found ? styles.targetChar : {}),
+                      ...(isSelected ? styles.selectedChar : {})
+                    }}
                   >
                     {char}
                   </span>
@@ -148,18 +141,135 @@ export default function DataScrambleGame({ difficulty = "medium", onComplete }) 
           ))}
         </div>
 
-        {/* Status */}
-        <div className="bg-gray-800 p-2 border-t border-cyan-400 text-xs">
+        {/* Footer */}
+        <div style={styles.footer}>
           {selectedText && (
-            <div className="text-cyan-300 mb-1">
-              SELECTED: <span className="text-yellow-300">{selectedText}</span>
+            <div style={styles.selection}>
+              SELECTED: <span style={styles.selectionValue}>{selectedText}</span>
             </div>
           )}
-          <div className="text-purple-300">
-            TARGET: <span className="text-yellow-300">{target}</span>
+          <div style={styles.targetDisplay}>
+            TARGET: <span style={styles.targetValue}>{target}</span>
           </div>
         </div>
       </div>
     </div>
   );
 }
+
+const styles = {
+  overlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.9)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1000,
+    fontFamily: 'var(--font-mono)'
+  },
+  container: {
+    backgroundColor: 'rgba(27, 19, 72, 0.5)',
+    border: '1px solid var(--neon-green)',
+    borderRadius: '4px',
+    width: '100%',
+    maxWidth: '800px',
+    position: 'relative',
+    boxShadow: '0 0 15px var(--neon-green)'
+  },
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: 'rgba(27, 19, 72, 0.7)',
+    padding: '0.5rem 1rem',
+    borderBottom: '1px solid var(--neon-green)'
+  },
+  headerSpan: {
+    color: 'var(--neon-green)',
+    fontSize: '0.9rem'
+  },
+  timer: {
+    color: 'var(--accent-red)',
+    fontSize: '0.9rem'
+  },
+  timerValue: {
+    fontWeight: 'bold'
+  },
+  instructions: {
+    padding: '0.5rem 1rem',
+    color: 'var(--neon-blue)',
+    fontSize: '0.75rem',
+    borderBottom: '1px solid var(--neon-green)',
+    backgroundColor: 'rgba(0, 0, 0, 0.3)'
+  },
+  message: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    padding: '1rem 2rem',
+    borderRadius: '4px',
+    zIndex: 10,
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+    boxShadow: '0 0 10px currentColor'
+  },
+  messageSuccess: {
+    backgroundColor: 'rgba(0, 128, 0, 0.8)',
+    border: '1px solid var(--neon-green)'
+  },
+  messageError: {
+    backgroundColor: 'rgba(234, 85, 71, 0.8)',
+    border: '1px solid var(--accent-red)'
+  },
+  display: {
+    padding: '1rem',
+    color: 'var(--neon-green)',
+    height: '400px',
+    overflowY: 'auto',
+    userSelect: 'text',
+    cursor: 'text',
+    fontFamily: 'var(--font-mono)',
+    fontSize: '0.9rem',
+    lineHeight: '1.5',
+    backgroundColor: 'rgba(0, 0, 0, 0.2)'
+  },
+  line: {
+    marginBottom: '0.25rem',
+    letterSpacing: '0.05em'
+  },
+  targetChar: {
+    color: 'var(--neon-blue)',
+    backgroundColor: 'rgba(0, 240, 255, 0.2)'
+  },
+  selectedChar: {
+    color: 'white',
+    backgroundColor: 'rgba(0, 240, 255, 0.4)'
+  },
+  footer: {
+    backgroundColor: 'rgba(27, 19, 72, 0.7)',
+    padding: '0.5rem 1rem',
+    borderTop: '1px solid var(--neon-green)',
+    fontSize: '0.8rem'
+  },
+  selection: {
+    color: 'var(--neon-blue)',
+    marginBottom: '0.5rem'
+  },
+  selectionValue: {
+    color: 'var(--accent-red)',
+    fontWeight: 'bold'
+  },
+  targetDisplay: {
+    color: 'var(--neon-green)'
+  },
+  targetValue: {
+    color: 'var(--accent-red)',
+    fontWeight: 'bold'
+  }
+};
