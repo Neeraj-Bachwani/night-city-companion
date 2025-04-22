@@ -99,8 +99,7 @@ export default function EventPanel() {
           />
         ))}
       </div>
-
-      {/* Redesigned Modal */}
+      
       {selectedEvent && !activeGame && (
         <div style={styles.modalOverlay}>
           <div style={{

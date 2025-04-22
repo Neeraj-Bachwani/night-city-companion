@@ -36,7 +36,7 @@ export default function TerminalGame({ mode = "time" }) {
     setInput("");
   }, []);
 
-  // Initialize game
+
   useEffect(() => {
     newWord();
     if (mode === "time") {
@@ -45,7 +45,7 @@ export default function TerminalGame({ mode = "time" }) {
     }
   }, [newWord, mode]);
 
-  // Check win/lose conditions
+
   useEffect(() => {
     if (mode === "time" && timeLeft <= 0) {
       setMessage({ text: "Time's up! Firewall reengaged.", type: "error" });

@@ -95,7 +95,7 @@ const styles = {
   signalStrength: {
     display: 'flex',
     alignItems: 'flex-end',
-    height: '1rem', // Matches SYNC text height
+    height: '1rem', 
     gap: '3px',
   },
   signalBar: {
